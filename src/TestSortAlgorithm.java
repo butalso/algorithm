@@ -2,7 +2,9 @@ import java.util.Arrays;
 
 public class TestSortAlgorithm {
     public static void main(String[] args) {
-        SortAlgorithmImpl algorithm = new SortAlgorithmImpl();
+        // fixme 验证assert断言已开， 应注释掉
+        // assert 1 == 2;
+        SortAlgorithm algorithm = new SortAlgorithmImpl();
 
         int[] array = new int[] {
                 15124, 14334, 14354, 12341, 13211, 14223, 15111, 13210, 13998, 12899,

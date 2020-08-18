@@ -1,16 +1,16 @@
 import java.util.*;
 
 public class SortAlgorithmImpl implements SortAlgorithm {
-    // 比较排序
-    // 交换排序
-    /*
-     * 稳定性排序
-     * 时间复杂度：最好O(n)，最坏O(n^2)，平均O(n^2)
-     * 空间复杂度：O(1)，原地排序
-     */
+    void swap(int[] array, int i, int j) {
+        int tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+
+    @Override
     public void bubbleSort(int[] array) {
         for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array.length - i - 1; j++) {
+            for (int j = 0; j < array.length - 1 - i; j++) {
                 if (array[j] > array[j + 1]) {
                     swap(array, j, j + 1);
                 }
@@ -18,30 +18,24 @@ public class SortAlgorithmImpl implements SortAlgorithm {
         }
     }
 
-    /*
-     * 非稳定性排序
-     * 时间复杂度：最好O(nlogn)，最坏O(n^2)，平均O(nlogn)
-     * 空间复杂度：O(1)，原地排序
-     */
+    @Override
     public void quickSort(int[] array) {
         quickSort(array, 0, array.length - 1);
     }
 
     void quickSort(int[] array, int start, int end) {
-        if (start >= end) {
-            return;
-        }
-        int d = quickSortPartition(array, start, end);
-        quickSort(array, start, d - 1);
-        quickSort(array, d + 1, end);
+        if (start >= end) return;
+        int mid = quickSortPartition(array, start, end);
+        quickSort(array, start, mid - 1);
+        quickSort(array, mid + 1, end);
     }
 
     int quickSortPartition(int[] array, int start, int end) {
         int pivot = array[start];
         int preIndex = start + 1;
         for (int i = preIndex; i <= end; i++) {
-            if (array[i] <= pivot) {
-                swap(array, preIndex, i);
+            if (array[i] < pivot) {
+                swap(array, i, preIndex);
                 preIndex++;
             }
         }
@@ -49,28 +43,20 @@ public class SortAlgorithmImpl implements SortAlgorithm {
         return preIndex - 1;
     }
 
-    // 插入排序
-    /*
-     * 稳定性排序
-     * 时间复杂度：最好O(n)，最坏O(n^2)，平均O(n^2)
-     * 空间复杂度：O(1)，原地排序
-     */
+    @Override
     public void insertionSort(int[] array) {
         for (int i = 1; i < array.length; i++) {
             int tmp = array[i];
-            int j;
-            for (j = i - 1; j >= 0 && array[j] > tmp; j--) {
+            int j = i - 1;
+            while (j >= 0 && array[j] > tmp) {
                 array[j + 1] = array[j];
+                j--;
             }
             array[j + 1] = tmp;
         }
     }
 
-    /*
-     * 非稳定性排序
-     * 时间复杂度：最好O(n)，最坏O(n^2)，平均O(nlogn^2)
-     * 空间复杂度：O(1)，原地排序
-     */
+    @Override
     public void shellSort(int[] array) {
         for (int step = array.length / 2; step > 0; step = step / 2) {
             for (int i = step; i < array.length; i++) {
@@ -85,12 +71,7 @@ public class SortAlgorithmImpl implements SortAlgorithm {
         }
     }
 
-    // 选择排序
-    /*
-     * 非稳定性排序
-     * 时间复杂度：最好O(n^2)，最坏O(n^2)，平均O(n^2)
-     * 空间复杂度：O(1)，原地排序
-     */
+    @Override
     public void selectionSort(int[] array) {
         for (int i = 0; i < array.length; i++) {
             int minIndex = i;
@@ -103,59 +84,44 @@ public class SortAlgorithmImpl implements SortAlgorithm {
         }
     }
 
-    /*
-     * 非稳定性排序
-     * 时间复杂度：最好O(nlogn)，最坏O(nlogn)，平均O(nlogn)
-     * 空间复杂度：O(1)，原地排序
-     */
-    int heapLen;
+    @Override
     public void heapSort(int[] array) {
-        heapLen = array.length;
         buildMaxHeap(array);
-
-        while (heapLen > 0) {
-            swap(array, 0, heapLen - 1);
-            heapLen--;
-            heapify(array, 0);
+        for (int i = array.length - 1; i >= 0; i--) {
+            swap(array, 0, i);
+            heapify(array, 0, i);
         }
     }
 
     void buildMaxHeap(int[] array) {
         for (int i = array.length / 2 - 1; i >= 0; i--) {
-            heapify(array, i);
+            heapify(array, i, array.length);
         }
     }
 
-    void heapify(int[] array, int i) {
+    void heapify(int[] array, int i, int len) {
         int leftChild = i * 2 + 1;
         int rightChild = i * 2 + 2;
         int largest = i;
-        if (leftChild < heapLen && array[leftChild] > array[largest]){
+        if (leftChild < len && array[leftChild] > array[largest]) {
             largest = leftChild;
         }
-        if (rightChild < heapLen && array[rightChild] > array[largest]) {
+        if (rightChild < len && array[rightChild] > array[largest]) {
             largest = rightChild;
         }
         if (largest != i) {
-            swap(array, i, largest);
-            heapify(array, largest);
+            swap(array, largest, i);
+            heapify(array, largest, len);
         }
     }
 
-    // 归并排序
-    /*
-     * 稳定性排序
-     * 时间复杂度：最好O(nlogn)，最坏O(nlogn)，平均O(nlogn)
-     * 空间复杂度：O(n)，外地排序
-     */
+    @Override
     public void mergeSort(int[] array) {
         mergeSort(array, 0, array.length - 1);
     }
 
     void mergeSort(int[] array, int start, int end) {
-        if (start >= end) {
-            return;
-        }
+        if (start >= end) return;
         int mid = start + (end - start) / 2;
         mergeSort(array, start, mid);
         mergeSort(array, mid + 1, end);
@@ -173,24 +139,20 @@ public class SortAlgorithmImpl implements SortAlgorithm {
             }
             start++;
         }
+
         while (i < left.length) {
             array[start] = left[i];
-            start++;
             i++;
+            start++;
         }
         while (j < right.length) {
             array[start] = right[j];
-            start++;
             j++;
+            start++;
         }
     }
 
-    // 非比较排序
-    /*
-     * 稳定性排序，设k为数的跨度范围，适用于k不是很大，数比较集中
-     * 时间复杂度：O(n+k)
-     * 空间复杂度：O(n+k)
-     */
+    @Override
     public void countSort(int[] array) {
         int min = array[0], max = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -209,25 +171,19 @@ public class SortAlgorithmImpl implements SortAlgorithm {
             count[i] += count[i - 1];
         }
 
-        int[] ans = new int[array.length];
-        for (int j = array.length - 1; j >= 0; j--) {
-            int idx = count[array[j] - min] - 1;
-            ans[idx] = array[j];
-            count[array[j] - min]--;
+        int[] tmp = new int[array.length];
+        for (int i = array.length - 1; i >= 0; i--) {
+            int idx = count[array[i] - min] - 1;
+            tmp[idx] = array[i];
+            count[array[i] - min]--;
         }
 
-        for (int i = 0; i < ans.length; i++) {
-            array[i] = ans[i];
+        for (int i = 0; i < tmp.length; i++) {
+            array[i] = tmp[i];
         }
     }
 
-    /*
-     * 稳定性排序，计数排序升级版
-     */
-    final int bucketStep = 10;
-    int indexFor(int j, int min) {
-        return (j - min) / bucketStep;
-    }
+    @Override
     public void bucketSort(int[] array) {
         int min = array[0], max = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -237,36 +193,41 @@ public class SortAlgorithmImpl implements SortAlgorithm {
                 max = array[i];
             }
         }
-        int length  = (max - min) / 10 + 1;
-        List<List<Integer>> buckets = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            buckets.add(new ArrayList<Integer>());
+
+        int step = 1000;
+        int len = (max - min) / step + 1;
+        List<Integer>[] buckets = new ArrayList[len];
+        for (int i = 0; i < len; i++) {
+            buckets[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < array.length; i++) {
-            int idx = indexFor(array[i], min);
-            buckets.get(idx).add(array[i]);
+            int idx = indexFor(array[i], min, step);
+            buckets[idx].add(array[i]);
         }
 
-        int index = 0;
-        for (int i = 0; i < length; i++) {
-            int[] tmpArray = new int[buckets.get(i).size()];
-            for (int j = 0; j < tmpArray.length; j++) {
-                tmpArray[j] = buckets.get(i).get(j);
+        int start = 0;
+        for (int i = 0; i < buckets.length; i++) {
+            int[] tmp = new int[buckets[i].size()];
+            for (int j = 0; j < tmp.length; j++) {
+                tmp[j] = buckets[i].get(j);
             }
-            insertionSort(tmpArray);
-            for (int j = 0; j < tmpArray.length; j++) {
-                array[index] = tmpArray[j];
-                index++;
+            insertionSort(tmp);
+            for (int j = 0; j < tmp.length; j++) {
+                array[start] = tmp[j];
+                start++;
             }
         }
     }
 
-    /*
-     * 稳定性排序，从低位到高位排序
-     */
+    int indexFor(int val, int min, int step) {
+        return (val - min) / step;
+    }
+
+    @Override
     public void radixSort(int[] array) {
         int k = maxBit(array);
+
         int radix = 1;
         for (int i = 0; i < k; i++) {
             int[] count = new int[10];
@@ -294,24 +255,16 @@ public class SortAlgorithmImpl implements SortAlgorithm {
 
     int maxBit(int[] array) {
         int max = array[0];
-        for (int i = 1; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] > max) {
                 max = array[i];
             }
         }
-        int d = 1;
+        int res = 1;
         while (max > 10) {
+            res++;
             max = max / 10;
-            d++;
         }
-        return d;
+        return res;
     }
-
-    void swap(int[] array, int i, int j) {
-        int tmp = array[i];
-        array[i] = array[j];
-        array[j] = tmp;
-    }
-
-
 }
